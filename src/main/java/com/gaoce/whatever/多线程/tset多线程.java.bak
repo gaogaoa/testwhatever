@@ -1,0 +1,46 @@
+package com.gaoce.whatever.多线程;
+
+import com.nis.shrio.da.config.testa;
+import com.nis.shrio.da.config.testres;
+import com.nis.shrio.da.domain.DeviceHost;
+import com.nis.shrio.da.domain.TimeProphet;
+import com.nis.shrio.da.service.DeviceHostService;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.*;
+
+public class tset多线程  implements Job {
+
+    @Autowired
+    DeviceHostService deviceHostService;
+    ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
+
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        Long startTime = System.currentTimeMillis();
+        List<TimeProphet> list = new ArrayList<>();
+        try {
+
+            List<Future> resultList = new ArrayList<>();
+            List<DeviceHost> deviceHostList = deviceHostService.getHostList();
+            CountDownLatch countDownLatch = new CountDownLatch(deviceHostList.size());
+            executor.submit(new testres(countDownLatch,resultList));
+            deviceHostList.stream().forEach(deviceHost -> {
+                Future future = executor.submit(new testa(countDownLatch,String.valueOf(UUID.randomUUID())));
+                resultList.add(future);
+            });
+
+            executor.shutdown();
+            Long endTime = System.currentTimeMillis();
+            System.out.println("使用时间 = [" + (endTime - startTime) + "]");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+}

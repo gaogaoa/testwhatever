@@ -1,0 +1,22 @@
+package com.gaoce.whatever.多线程;
+
+
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+
+public class testa implements Callable {
+    private CountDownLatch downLatch;
+    private String name ;
+    public  testa(CountDownLatch downLatch, String name ){
+        this.downLatch = downLatch;
+        this.name = name;
+    };
+
+    @Override
+    public Object call() throws Exception {
+        this.downLatch.countDown();
+       // Thread.sleep(1000);
+        return null;
+    }
+}
