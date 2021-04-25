@@ -1,6 +1,7 @@
 package com.gaoce.whatever;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class arraylist源码 {
 
@@ -14,12 +15,13 @@ public class arraylist源码 {
         System.out.println(list);
         Set set =new HashSet();
         Set set1 = new LinkedHashSet();
-
         set.add("sd");
 
     }
 
     private static void xxx(int index, byte element){
+
+        Map map = new ConcurrentHashMap();
 
         byte[]  srcBytes = new byte[]{2,5,0,0};
          byte[] destBytes = new byte[4];
